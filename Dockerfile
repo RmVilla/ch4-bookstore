@@ -1,16 +1,21 @@
-FROM python:3.9.9-slim-bullseye
+FROM python:3.9-slim
 
-WORKDIR /code
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Install dependencies for psycopg2
-RUN apt-get update && apt-get install -y \
-    libpq-dev gcc && \
-    rm -rf /var/lib/apt/lists/*
+# Set work directory
+WORKDIR /usr/src/app
 
-COPY ./requirements.txt .
-
+# Install dependencies
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy project
 COPY . .
 
+# Expose the port for the server
+EXPOSE 8000
+
+# Command to run the server
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
